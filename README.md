@@ -44,6 +44,75 @@ It also enables the CLI tools `yolo-detect`, `yolo-train`, and `yolo-test` every
 pip3 install pytorchyolo --user
 ```
 
+## CUDA/GPU Support
+
+### CUDA Installation and Version
+
+CUDA support in this project is provided through PyTorch, not by direct CUDA installation. The project automatically detects and uses GPU acceleration if CUDA is available on your system.
+
+#### How CUDA is Installed
+
+This project does **not** directly install CUDA. Instead, CUDA support comes from:
+
+1. **PyTorch Package**: The PyTorch package (version 1.10.1 to <1.13.0 as specified in `pyproject.toml`) includes CUDA libraries when you install the GPU version.
+
+2. **System CUDA**: For GPU acceleration to work, you need:
+   - NVIDIA GPU with CUDA Compute Capability 3.5 or higher
+   - NVIDIA GPU drivers properly installed on your system
+   - Compatible CUDA Toolkit (optional, as PyTorch bundles CUDA libraries)
+
+#### Compatible CUDA Versions
+
+The PyTorch versions used by this project (1.10.1 to <1.13.0) are compatible with:
+- CUDA 10.2
+- CUDA 11.1
+- CUDA 11.3
+- CUDA 11.6
+
+#### Installing PyTorch with CUDA Support
+
+By default, `poetry install` or `pip install pytorchyolo` will install the latest compatible PyTorch version available for your system. PyTorch will automatically use CUDA if available.
+
+To explicitly install PyTorch with a specific CUDA version:
+
+```bash
+# For CUDA 11.6 (recommended)
+pip3 install torch==1.12.1+cu116 torchvision==0.13.1+cu116 --extra-index-url https://download.pytorch.org/whl/cu116
+
+# For CUDA 11.3
+pip3 install torch==1.12.1+cu113 torchvision==0.13.1+cu113 --extra-index-url https://download.pytorch.org/whl/cu113
+
+# For CPU only (no CUDA)
+pip3 install torch==1.12.1+cpu torchvision==0.13.1+cpu --extra-index-url https://download.pytorch.org/whl/cpu
+```
+
+#### Verifying CUDA Installation
+
+To check if CUDA is available and working:
+
+```bash
+python3 -c "import torch; print(f'CUDA available: {torch.cuda.is_available()}'); print(f'CUDA version: {torch.version.cuda}'); print(f'Device count: {torch.cuda.device_count()}')"
+```
+
+The project will automatically use GPU acceleration if CUDA is detected, otherwise it will fall back to CPU.
+
+#### Troubleshooting GPU/CUDA Issues
+
+**CUDA not detected despite having GPU:**
+- Ensure NVIDIA drivers are properly installed: `nvidia-smi`
+- Reinstall PyTorch with explicit CUDA version (see above)
+- Check PyTorch CUDA version matches your system CUDA: `nvcc --version`
+
+**Out of memory errors:**
+- Reduce batch size in training/detection
+- Use smaller input image resolution
+- Enable gradient checkpointing if available
+
+**Performance tips:**
+- GPU acceleration provides 5-10x speedup for training
+- Inference on GPU (e.g., 1080ti) achieves ~74 FPS for Darknet-53 backbone
+- For optimal performance, ensure CUDA version matches your GPU architecture
+
 ## Test
 Evaluates the model on COCO test dataset.
 To download this dataset as well as weights, see above.
