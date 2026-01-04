@@ -79,13 +79,68 @@ poetry run yolo-detect --images data/samples/
 <p align="center"><img src="https://github.com/eriklindernoren/PyTorch-YOLOv3/raw/master/assets/messi.png" width="480"\></p>
 
 ## Train
-For argument descriptions have a look at `poetry run yolo-train --help`
+
+### Training Commands Reference
+
+The `yolo-train` command provides several options to customize the training process.
+
+#### Basic Usage
+
+```bash
+poetry run yolo-train --data <data_config> --model <model_config> [OPTIONS]
+```
+
+#### Available Arguments
+
+| Argument | Short | Default | Description |
+|----------|-------|---------|-------------|
+| `--model` | `-m` | `config/yolov3.cfg` | Path to model definition file (.cfg) |
+| `--data` | `-d` | `config/coco.data` | Path to data config file (.data) |
+| `--epochs` | `-e` | `300` | Number of epochs |
+| `--verbose` | `-v` | `False` | Makes the training more verbose |
+| `--n_cpu` | | `8` | Number of cpu threads to use during batch generation |
+| `--pretrained_weights` | | `None` | Path to checkpoint file (.weights or .pth). Starts training from checkpoint model |
+| `--checkpoint_interval` | | `1` | Interval of epochs between saving model weights |
+| `--evaluation_interval` | | `1` | Interval of epochs between evaluations on validation set |
+| `--multiscale_training` | | `False` | Allow multi-scale training |
+| `--iou_thres` | | `0.5` | Evaluation: IOU threshold required to qualify as detected |
+| `--conf_thres` | | `0.1` | Evaluation: Object confidence threshold |
+| `--nms_thres` | | `0.5` | Evaluation: IOU threshold for non-maximum suppression |
+| `--logdir` | | `logs` | Directory for training log files (e.g. for TensorBoard) |
+| `--seed` | | `-1` | Makes results reproducable. Set -1 to disable. |
 
 #### Example (COCO)
 To train on COCO using a Darknet-53 backend pretrained on ImageNet run:
 
 ```bash
-poetry run yolo-train --data config/coco.data  --pretrained_weights weights/darknet53.conv.74
+poetry run yolo-train --data config/coco.data --pretrained_weights weights/darknet53.conv.74
+```
+
+#### More Training Examples
+
+**Train with custom number of epochs:**
+```bash
+poetry run yolo-train --data config/coco.data --epochs 100
+```
+
+**Train with multiscale training enabled:**
+```bash
+poetry run yolo-train --data config/coco.data --multiscale_training
+```
+
+**Train with custom checkpoint interval:**
+```bash
+poetry run yolo-train --data config/coco.data --checkpoint_interval 5
+```
+
+**Resume training from a checkpoint:**
+```bash
+poetry run yolo-train --data config/coco.data --pretrained_weights checkpoints/yolov3_ckpt_50.pth
+```
+
+**Train with reproducible results:**
+```bash
+poetry run yolo-train --data config/coco.data --seed 42
 ```
 
 #### Tensorboard
